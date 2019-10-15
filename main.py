@@ -4,7 +4,7 @@ from tkinter.filedialog import askopenfilename, asksaveasfilename
 
 def main():
     print("Program: Remove Duplicates")
-    print("Release: 0.1.1")
+    print("Release: 0.1.2")
     print("Date: 2019-10-15")
     print("Author: Brian Neely")
     print()
@@ -34,7 +34,24 @@ def main():
     file_out = select_file_out(file_in)
 
     # Select Column
-    column = column_selection(data, "Select column to replace values in.")
+    column = list()
+    column.append(column_selection(data, "Select column to replace values in."))
+    additional_columns = y_n_question("Perform the same replacement on additional columns (y/n): ")
+
+    # Ask for additional Columns
+    while additional_columns == "y":
+        additional_column = column_selection(data, "Select column to replace values in.")
+
+        # See if additional column is the escape column
+        if additional_column == "__Select None__":
+            # Leave loop
+            additional_columns = "n"
+        else:
+            # Add column to list
+            column.append(additional_column)
+            # Ask if another is desired
+            additional_columns = y_n_question("Perform the same replacement on additional columns (y/n): ")
+
 
     # Ask for what to replace
     replace = input("Enter cell value to replace: ")
@@ -44,15 +61,19 @@ def main():
     replacement = input("Enter replacement: ")
 
     # Replace cells
-    print()
-    print("Replacing cells containing {" + replace + "} with {" + replacement + "} in column [" + column + "]")
     # If replace is blank then specify as null
-    print()
-    print()
-    if replace == "":
-        data[column].fillna(replacement, inplace=True)
-    else:
-        data[column].replace(replace, replacement, inplace=True)
+    for i in column:
+        try:
+            print()
+            print("Replacing cells containing {" + replace + "} with {" + replacement + "} in column [" + str(i) + "]")
+            if replace == "":
+                data[i].fillna(replacement, inplace=True)
+            else:
+                data[i].replace(replace, replacement, inplace=True)
+        except:
+            print()
+            print("Could not perform replacement on column: " + str(i))
+            continue
 
     # Writing output file
     print()
@@ -66,6 +87,9 @@ def main():
 def column_selection(data, title):
     # Create Column Header List
     headers = list(data.columns.values)
+
+    # Add escape into column
+    headers.append("__Select None__")
     while True:
         try:
             print(title)
