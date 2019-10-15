@@ -4,7 +4,7 @@ from tkinter.filedialog import askopenfilename, asksaveasfilename
 
 def main():
     print("Program: Remove Duplicates")
-    print("Release: 0.1.0")
+    print("Release: 0.1.1")
     print("Date: 2019-10-15")
     print("Author: Brian Neely")
     print()
